@@ -47,6 +47,7 @@ class ImagesController extends Controller
             $path = Storage::disk('s3')->putFile('inputs', $request->file('file'), 'public');
             // アップロードした画像のフルパスを取得
             $image->image_path = Storage::disk('s3')->url($path);
+            
             $image->save();
             
             return redirect('/');
