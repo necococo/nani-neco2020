@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Image;
 use Storage;
+use URL;
 
 class ImagesController extends Controller
 {
@@ -34,7 +35,7 @@ class ImagesController extends Controller
                 // 画像ファイルであること
                 'image',
                 // MIMEタイプを指定
-                'mimes:jpeg,png',
+                'mimes:jpeg,png,jpg',
                 //表示速度の問題で2MB以下 
                 //そのままだとphp.iniに書かれた制限に先に引っかかるのでなにもエラー表示してくれないのでphp.iniのupload_max_filesize = 2M　->　5.1Mにした。
                 'max:2048'
@@ -48,9 +49,38 @@ class ImagesController extends Controller
             // アップロードした画像のフルパスを取得
             $image->image_path = Storage::disk('s3')->url($path);
             
+            $USERNAME = env('whatcat_username');
+            $PASSWORD = env('whatcat_password');
+            
+            $header = ['Content-Type:multipart/form-data'];
+            $cfile = array('image' => new \CURLFile( $_FILES["file"]["tmp_name"]) );
+            // var_dump("cfile:".print_r($cfile,true));
+            $api_url = 'http://whatcat.ap.mextractr.net/api_query';
+            
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $api_url);
+            curl_setopt($curl, CURLOPT_POST, TRUE);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $cfile);
+            curl_setopt($curl, CURLOPT_USERPWD, "$USERNAME:$PASSWORD");
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            //TRUE を設定すると、curl_exec() の返り値を 文字列で返します。通常はデータを直接出力します。
+              
+            $response = curl_exec($curl);
+            $body = json_decode($response, true);
+            $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            curl_close($curl); // curlの処理終わり
+            
+            // $result = [];
+            // $result['http_code'] = $httpCode;
+            // $result['body'] = $body;
+            // return $result;
+             
+            
             $image->save();
             
-            return redirect('/');
+            return redirect('/images/show');
         }else {
             return  redirect('/images/create');
         }
