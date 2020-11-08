@@ -68,7 +68,7 @@ class ImagesController extends Controller
             //TRUE を設定すると、curl_exec() の返り値を 文字列で返します。通常はデータを直接出力します。
             // $analized = curl_exec($curl);  
             $response = curl_exec($curl);
-            $outputs = json_decode($response, true);
+            
             // $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl); // curlの処理終わり
             
@@ -79,8 +79,9 @@ class ImagesController extends Controller
              
             $image->analized = $response;
             $image->save();
+            // $outputs = json_decode($image->analized, true);
             
-            return view('images.show', ['image' => $image, 'outputs'=>$outputs]);
+            return view('images.show', ['image' => $image]);
         }else {
             return  redirect('/images/create');
         }
