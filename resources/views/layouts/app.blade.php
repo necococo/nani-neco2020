@@ -16,9 +16,17 @@
 
     </head>
     <body>
+        
         @include('commons.navbar')
 
         <div class="container">
+            <p>上のナビのUploadから2MB以下のjpgかpng画像をアップするニャン<br>
+            イラストや人の顔でもできるニャン<br>
+            スマホの場合は左上のシマシママークから見れくれニャン<br>
+            AIがなんの猫にどのくらい似ているかを判定してくれるニャン<br>
+            もう一度結果をみたいときはナビのAll Imagesからみたい画像を選択するニャン<br>
+            現状では他の人の画像も削除できるので消さないであげてニャン<br>
+            PUBG MOBILEとはなにも関係ないニャン</p>
             @include('commons.error_messages')
 
             @yield('content')
