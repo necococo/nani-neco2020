@@ -36,8 +36,8 @@ class ImagesController extends Controller
                 'image',
                 // MIMEタイプを指定
                 'mimes:jpeg,png,jpg',
-                //表示速度の問題で2MB以下 
-                //そのままだとphp.iniに書かれた制限に先に引っかかるのでなにもエラー表示してくれないのでphp.iniのupload_max_filesize = 2M　->　5.1Mにした。
+                //表示速度の問題で2MB以下にしたい。 
+                //そのままだとphp.iniに書かれた2MB制限に先に引っかかるので、なにもエラー表示してくれない。php.iniのupload_max_filesize = 2Mを5Mにした。
                 'max:2048'
             ]
         ]);
@@ -49,14 +49,14 @@ class ImagesController extends Controller
             // アップロードした画像のフルパスを取得
             $image->image_path = Storage::disk('s3')->url($path);
             
+            //外部API利用設定
             $USERNAME = env('whatcat_username');
             $PASSWORD = env('whatcat_password');
-            
             $header = ['Content-Type:multipart/form-data'];
             $cfile = array('image' => new \CURLFile( $_FILES["file"]["tmp_name"]) );
             // var_dump("cfile:".print_r($cfile,true));
             $api_url = 'http://whatcat.ap.mextractr.net/api_query';
-            
+            //APIの説明のcurlコマンドと同じ内容にする
             $curl = curl_init();
             curl_setopt($curl, CURLOPT_URL, $api_url);
             curl_setopt($curl, CURLOPT_POST, TRUE);
@@ -64,22 +64,15 @@ class ImagesController extends Controller
             curl_setopt($curl, CURLOPT_USERPWD, "$USERNAME:$PASSWORD");
             curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            //TRUE を設定すると、curl_exec() の返り値を 文字列で返します。通常はデータを直接出力します。
-            // $analized = curl_exec($curl);  
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);//TRUE を設定すると、curl_exec() の返り値を 文字列で返します。通常はデータを直接出力します。
             $response = curl_exec($curl);
-            
+            // $outputs = json_decode($image->analized, true);これはview側で処理することにした。
+            // $is_cat = $outputs[0][1] >= 0.3;
             // $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl); // curlの処理終わり
-            
-            // $result = [];
-            // $result['http_code'] = $httpCode;
-            // $result['body'] = $body;
-            // return $result;
              
             $image->analized = $response;
             $image->save();
-            // $outputs = json_decode($image->analized, true);
             
             return view('images.show', ['image' => $image]);
         }else {
