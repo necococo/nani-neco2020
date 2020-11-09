@@ -8,10 +8,11 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">Nani-Neco?</a>
+                <a class="navbar-brand" href="/usage">Nani-Necoとは？</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
+                    
                     <li>{!! link_to_route('images.create', 'Upload ( jpg, png < 2MB)') !!}</li>
                     <li>{!! link_to_route('images.index', 'All Images') !!}</li>
                 </ul>

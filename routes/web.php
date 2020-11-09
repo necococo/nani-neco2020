@@ -12,5 +12,8 @@
 */
 
 Route::get('/', 'ImagesController@index');
+Route::get('/usage', function () {
+    return view('usage');
+})->name('usage');
 
 Route::resource('images', 'ImagesController', ['only' => ['index', 'create', 'store', 'show', 'destroy']]);
