@@ -12,9 +12,9 @@
           {{ $output[0] }}:{{ round($output[1], 3) }}  <br>
       @endforeach
       
-      <!--{!! Form::open(['route' => ['images.destroy', $image->id], 'method' => 'delete']) !!}-->
-      <!--    {!! Form::submit('Delete', ['class' => "btn btn-danger"]) !!}-->
-      <!--{!! Form::close() !!}-->
+      {!! Form::open(['route' => ['images.destroy', $image->id], 'method' => 'delete']) !!}
+          {!! Form::submit('Delete', ['class' => "btn btn-danger"]) !!}
+      {!! Form::close() !!}
   @endif
   
   
